@@ -32,12 +32,29 @@ function defaultSetting(): TSSettingData {
     return { bgmVolume: 0.7, sfxVolume: 0.7, filmFilter: true };
 }
 
+/** 用来源数据覆盖目标对象（保持 data 引用不变，满足 Babel 命名空间导出限制） */
+function applyData(target: TSGameData, source: Partial<TSGameData> | null): void {
+    const fresh = new TSGameData();
+    const src = source || fresh;
+    target.version = SAVE_VERSION;
+    target.coins = typeof src.coins === "number" && !isNaN(src.coins) ? src.coins : fresh.coins;
+    target.lastExitTimestamp = typeof src.lastExitTimestamp === "number" ? src.lastExitTimestamp : fresh.lastExitTimestamp;
+    target.adTodayWatchCount = typeof src.adTodayWatchCount === "number" ? src.adTodayWatchCount : 0;
+    target.quickSpawnCustomerCD = typeof src.quickSpawnCustomerCD === "number" ? src.quickSpawnCustomerCD : 0;
+    target.tutorialFinished = !!src.tutorialFinished;
+    target.setting = Object.assign(defaultSetting(), src.setting || {});
+    target.shelfSlots = Array.isArray(src.shelfSlots) ? src.shelfSlots : [];
+    target.memoryFragments = src.memoryFragments && typeof src.memoryFragments === "object" ? src.memoryFragments : {};
+    target.albumUnlocked = Array.isArray(src.albumUnlocked) ? src.albumUnlocked : [];
+}
+
 /**
  * 全局存档系统
  * 所有游戏数据统一托管于此，业务模块调用 MarkDirty 标记更新，异步合并存档，避免频繁读写。
  */
 export namespace TSSaveSystem {
-    export let data: TSGameData = new TSGameData();
+    // 注意：Cocos 使用 Babel 编译 TS，命名空间内只能导出 const，不能导出 let/var
+    export const data: TSGameData = new TSGameData();
 
     let isDirty = false;
     let saveTimer: ReturnType<typeof setTimeout> | null = null;
@@ -87,34 +104,18 @@ export namespace TSSaveSystem {
 
     /** 加载存档，自动补齐缺失字段，异常时重置为默认存档 */
     export function Load(): void {
-        const fresh = new TSGameData();
         const raw = readRaw();
-        if (raw === null || raw === undefined || raw === "") {
-            data = fresh;
-            isDirty = false;
-            return;
-        }
-
-        try {
-            const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
-            if (!parsed || typeof parsed !== "object") {
-                data = fresh;
-                isDirty = false;
-                return;
+        let parsed: any = null;
+        if (raw !== null && raw !== undefined && raw !== "") {
+            try {
+                const decoded = typeof raw === "string" ? JSON.parse(raw) : raw;
+                if (decoded && typeof decoded === "object") parsed = decoded;
+            } catch (e) {
+                console.error("[TSSaveSystem] 存档解析失败，已重置为默认存档", e);
+                parsed = null;
             }
-
-            data = Object.assign(fresh, parsed);
-            // 部分字段做类型兜底，防止旧存档或脏数据导致运行时异常
-            data.setting = Object.assign(defaultSetting(), parsed.setting || {});
-            if (!Array.isArray(data.shelfSlots)) data.shelfSlots = [];
-            if (!Array.isArray(data.albumUnlocked)) data.albumUnlocked = [];
-            if (!data.memoryFragments || typeof data.memoryFragments !== "object") data.memoryFragments = {};
-            if (typeof data.coins !== "number" || isNaN(data.coins)) data.coins = CONFIG.INIT_COINS;
-            data.version = SAVE_VERSION;
-        } catch (e) {
-            console.error("[TSSaveSystem] 存档解析失败，已重置为默认存档", e);
-            data = fresh;
         }
+        applyData(data, parsed);
         isDirty = false;
     }
 
@@ -142,7 +143,7 @@ export namespace TSSaveSystem {
             saveTimer = null;
         }
         removeRaw();
-        data = new TSGameData();
+        applyData(data, null);
         Save(true);
     }
 }

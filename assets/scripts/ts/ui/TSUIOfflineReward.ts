@@ -1,6 +1,7 @@
 import { _decorator, Component, Label } from 'cc';
 import { TSAdSystem, TSAdType } from '../game/TSAdSystem';
 import { TSOfflineIncome } from '../game/TSOfflineIncome';
+import { TSAudioManager } from '../game/TSAudioManager';
 const { ccclass, property } = _decorator;
 
 /**
@@ -23,6 +24,7 @@ export class TSUIOfflineReward extends Component {
     /** 直接领取基础收益 */
     public OnClaimBase(): void {
         TSOfflineIncome.ClaimReward(1);
+        TSAudioManager.PlayCoin();
         this.OnClose();
     }
 
@@ -31,6 +33,7 @@ export class TSUIOfflineReward extends Component {
         TSAdSystem.ShowAd(TSAdType.OfflineDouble, (success) => {
             // 广告未完整观看时，至少发放基础收益，避免玩家损失
             if (!success) TSOfflineIncome.ClaimReward(1);
+            TSAudioManager.PlayCoin();
         });
         this.OnClose();
     }

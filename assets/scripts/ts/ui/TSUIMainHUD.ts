@@ -3,6 +3,7 @@ import { TSGameRoot } from '../game/TSGameRoot';
 import { TSSaveSystem } from '../game/TSSaveSystem';
 import { TSAlbumSystem } from '../game/TSAlbumSystem';
 import { TSAdSystem, TSAdType } from '../game/TSAdSystem';
+import { TSAudioManager } from '../game/TSAudioManager';
 import { TSUIManager } from './TSUIManager';
 import { TSEvent, TSEventType } from '../TSEvent';
 import { TSAlbumConfig } from '../../config/TSAlbumConfig';
@@ -61,16 +62,19 @@ export class TSUIMainHUD extends Component {
 
     /** 打开货架面板 */
     public OnClickShelf(): void {
+        TSAudioManager.PlayClick();
         TSUIManager.ShowShelfPanel();
     }
 
     /** 打开相册面板 */
     public OnClickAlbum(): void {
+        TSAudioManager.PlayClick();
         TSUIManager.ShowAlbumPanel();
     }
 
     /** 打开设置面板 */
     public OnClickSetting(): void {
+        TSAudioManager.PlayClick();
         TSUIManager.ShowSettingPanel();
     }
 
@@ -90,6 +94,7 @@ export class TSUIMainHUD extends Component {
             }
             TSSaveSystem.data.quickSpawnCustomerCD = Date.now() + this.quickCustomerCD * 1000;
             TSSaveSystem.MarkDirty();
+            TSAudioManager.PlayClick();
             this.Toast("顾客正在赶来~");
         });
     }

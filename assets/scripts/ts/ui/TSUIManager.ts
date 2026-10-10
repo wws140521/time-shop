@@ -1,15 +1,15 @@
-import { Node, Prefab, instantiate } from 'cc';
+import { Node, instantiate } from 'cc';
 import { TSUIOfflineReward } from './TSUIOfflineReward';
 import { TSUIShelf } from './TSUIShelf';
 import { TSUIAlbum } from './TSUIAlbum';
 
-/** UI 管理器配置，由 TSGameRoot 在入口注入编辑器挂载的节点与预制体 */
+/** UI 管理器配置，由 TSGameRoot 在入口注入编辑器挂载的节点模板 */
 export interface TSUIConfig {
     uiRoot: Node;
-    offlinePopup: Prefab;
-    shelfPanel: Prefab;
-    albumPanel: Prefab;
-    settingPanel: Prefab;
+    offlinePopup: Node;
+    shelfPanel: Node;
+    albumPanel: Node;
+    settingPanel: Node;
 }
 
 /**
@@ -28,8 +28,8 @@ export class TSUIManager {
         TSUIManager.instance.cfg = cfg;
     }
 
-    /** 创建或复用面板节点 */
-    private openPanel(key: string, prefab: Prefab | undefined): Node | null {
+    /** 创建或复用面板节点（模板来自场景中的隐藏模板节点） */
+    private openPanel(key: string, template: Node | undefined): Node | null {
         if (!this.cfg || !this.cfg.uiRoot) {
             console.error("[TSUIManager] UI 未初始化，请检查 TSGameRoot 是否已注入配置");
             return null;
@@ -41,12 +41,13 @@ export class TSUIManager {
             return exist;
         }
 
-        if (!prefab) {
-            console.error(`[TSUIManager] 面板预制体未配置：${key}`);
+        if (!template) {
+            console.error(`[TSUIManager] 面板模板未配置：${key}`);
             return null;
         }
 
-        const node = instantiate(prefab);
+        const node = instantiate(template);
+        node.active = true;
         this.cfg.uiRoot.addChild(node);
         this.openPanels.set(key, node);
         // 面板销毁后清理缓存，保证下次打开重新创建

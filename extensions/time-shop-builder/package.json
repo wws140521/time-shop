@@ -1,0 +1,27 @@
+{
+  "package_version": 2,
+  "version": "1.0.0",
+  "name": "time-shop-builder",
+  "title": "TimeShop 场景生成器",
+  "description": "一键为《拾光小卖部》生成主场景：HUD、各面板模板与全部组件/事件绑定。",
+  "author": "TimeShop",
+  "editor": ">=3.8.0",
+  "main": "./src/main.js",
+  "contributions": {
+    "menu": [
+      {
+        "path": "i18n:menu.extension",
+        "label": "生成 TimeShop 主场景",
+        "message": "build-scene"
+      }
+    ],
+    "messages": {
+      "build-scene": {
+        "methods": ["buildScene"]
+      }
+    },
+    "scene": {
+      "script": "./src/scene.js"
+    }
+  }
+}

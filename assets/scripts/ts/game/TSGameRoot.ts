@@ -1,4 +1,4 @@
-import { _decorator, Component, Node, Prefab } from 'cc';
+import { _decorator, Component, Node } from 'cc';
 import { TSSaveSystem } from './TSSaveSystem';
 import { TSOfflineIncome } from './TSOfflineIncome';
 import { TSCustomerSystem } from './TSCustomerSystem';
@@ -20,17 +20,17 @@ export class TSGameRoot extends Component {
     @property(Node)
     public uiRoot: Node = null!;
 
-    @property(Prefab)
-    public offlinePopupPrefab: Prefab = null!;
+    @property(Node)
+    public offlinePopupTemplate: Node = null!;
 
-    @property(Prefab)
-    public shelfPanelPrefab: Prefab = null!;
+    @property(Node)
+    public shelfPanelTemplate: Node = null!;
 
-    @property(Prefab)
-    public albumPanelPrefab: Prefab = null!;
+    @property(Node)
+    public albumPanelTemplate: Node = null!;
 
-    @property(Prefab)
-    public settingPanelPrefab: Prefab = null!;
+    @property(Node)
+    public settingPanelTemplate: Node = null!;
 
     @property(TSCustomerSystem)
     public customerSystem: TSCustomerSystem = null!;
@@ -59,10 +59,10 @@ export class TSGameRoot extends Component {
         TSAdSystem.Init();
         TSUIManager.Init({
             uiRoot: this.uiRoot,
-            offlinePopup: this.offlinePopupPrefab,
-            shelfPanel: this.shelfPanelPrefab,
-            albumPanel: this.albumPanelPrefab,
-            settingPanel: this.settingPanelPrefab,
+            offlinePopup: this.offlinePopupTemplate,
+            shelfPanel: this.shelfPanelTemplate,
+            albumPanel: this.albumPanelTemplate,
+            settingPanel: this.settingPanelTemplate,
         });
 
         // 使用上次退出时间结算离线收益，随后刷新退出时间戳
