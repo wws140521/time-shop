@@ -5,5 +5,15 @@
   "creator": {
     "version": "3.8.6"
   },
-  "type": "3d"
+  "type": "3d",
+  "scripts": {
+    "lint": "eslint assets",
+    "lint:fix": "eslint assets --fix"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "eslint": "^9.39.4",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.71.1"
+  }
 }

@@ -2,7 +2,6 @@ import { Node, Prefab, instantiate } from 'cc';
 import { TSUIOfflineReward } from './TSUIOfflineReward';
 import { TSUIShelf } from './TSUIShelf';
 import { TSUIAlbum } from './TSUIAlbum';
-import { TSUISetting } from './TSUISetting';
 
 /** UI 管理器配置，由 TSGameRoot 在入口注入编辑器挂载的节点与预制体 */
 export interface TSUIConfig {
