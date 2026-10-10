@@ -1,0 +1,14 @@
+{
+  "appid": "wx0000000000000000",
+  "projectname": "TimeShop",
+  "description": "拾光小卖部 - 怀旧治愈系微信小游戏",
+  "compileType": "game",
+  "libVersion": "3.0.0",
+  "setting": {
+    "es6": false,
+    "minified": true,
+    "urlCheck": false,
+    "postcss": false,
+    "autoAudits": false
+  }
+}
